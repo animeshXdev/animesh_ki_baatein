@@ -125,9 +125,9 @@ export function Footer({
         {/* Bottom copyright */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-[#667085] gap-4">
           <p>© {currentYear} {siteName}. All rights reserved.</p>
-          <div className="flex items-center gap-2">
-            <span>Powered by Next.js & SQLite</span>
-          </div>
+          <p className="text-[#667085]">
+            Crafted for curious minds and lifelong learners.
+          </p>
         </div>
       </div>
     </footer>

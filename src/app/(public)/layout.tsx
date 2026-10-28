@@ -1,6 +1,7 @@
 import React from "react";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { ScrollToTop } from "@/components/common/ScrollToTop";
 import { getAllCategories } from "@/features/categories/category-service";
 import { getSiteSettings } from "@/features/settings/settings-service";
 
@@ -27,6 +28,7 @@ export default async function PublicLayout({
         youtubeUrl={settings.youtubeUrl}
         instagramUrl={settings.instagramUrl}
       />
+      <ScrollToTop />
     </div>
   );
 }
