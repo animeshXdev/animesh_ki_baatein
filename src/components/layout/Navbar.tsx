@@ -56,6 +56,18 @@ export function Navbar({ categories = [] }: NavbarProps) {
     setSearchOpen(false);
   }, [pathname]);
 
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [mobileMenuOpen]);
+
   useEffect(() => {
     if (searchOpen) {
       searchInputRef.current?.focus();
@@ -269,9 +281,57 @@ export function Navbar({ categories = [] }: NavbarProps) {
         </div>
       )}
 
-      {/* Mobile Drawer Menu */}
-      {mobileMenuOpen && (
-        <div className="md:hidden border-t border-[#E9E7F1] bg-white px-6 py-6 space-y-6 animate-in slide-in-from-top-2 duration-200">
+      {/* Mobile Backdrop Overlay */}
+      <div
+        className={`fixed inset-0 bg-black/40 backdrop-blur-xs z-50 md:hidden transition-opacity duration-300 ${
+          mobileMenuOpen
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none"
+        }`}
+        onClick={() => setMobileMenuOpen(false)}
+        aria-hidden="true"
+      />
+
+      {/* Mobile Left Sidebar Drawer */}
+      <aside
+        className={`fixed top-0 bottom-0 left-0 w-80 max-w-[85vw] bg-white z-50 md:hidden shadow-2xl flex flex-col justify-between border-r border-[#E9E7F1] transition-transform duration-300 ease-out ${
+          mobileMenuOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+        aria-label="Mobile navigation sidebar"
+      >
+        {/* Drawer Header with Logo & Close Button */}
+        <div className="p-5 border-b border-[#E9E7F1] flex items-center justify-between bg-white">
+          <Link
+            href="/"
+            onClick={() => setMobileMenuOpen(false)}
+            className="flex items-center gap-2.5 group"
+          >
+            <div className="relative w-9 h-9 rounded-xl bg-white border border-[#E9E7F1] shadow-xs flex items-center justify-center p-1">
+              <Image
+                src="/logo.png"
+                alt="Animesh ki Baatein"
+                width={32}
+                height={32}
+                className="w-full h-full object-contain"
+              />
+            </div>
+            <span className="font-heading font-bold text-base tracking-tight text-[#202A3D]">
+              Animesh <span className="text-[#7434E8]">ki Baatein</span>
+            </span>
+          </Link>
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen(false)}
+            aria-label="Close navigation sidebar"
+            className="w-9 h-9 rounded-xl border border-[#E9E7F1] flex items-center justify-center text-[#667085] hover:text-[#202A3D] hover:bg-[#FAF9FE] transition-colors"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Scrollable Nav Content */}
+        <div className="flex-1 overflow-y-auto p-5 space-y-6">
+          {/* Quick Search */}
           <form onSubmit={handleSearchSubmit} className="relative">
             <Search className="w-4 h-4 text-[#667085] absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
@@ -279,53 +339,82 @@ export function Navbar({ categories = [] }: NavbarProps) {
               placeholder="Search articles..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-[#FAF9FE] border border-[#E9E7F1] rounded-xl pl-10 pr-4 py-2.5 text-sm"
+              className="w-full bg-[#FAF9FE] border border-[#E9E7F1] rounded-xl pl-10 pr-4 py-2.5 text-xs text-[#202A3D] placeholder-[#98A2B3] focus:outline-none focus:ring-2 focus:ring-[#7434E8] focus:border-transparent transition-all"
             />
           </form>
 
-          <div className="flex flex-col space-y-3">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`py-2 text-base font-medium transition-colors ${
-                  pathname === link.href ? "text-[#7434E8] font-semibold" : "text-[#202A3D]"
-                }`}
-              >
-                {link.name}
-              </Link>
-            ))}
-          </div>
-
-          <div className="border-t border-[#E9E7F1] pt-4">
-            <p className="text-xs font-semibold uppercase tracking-wider text-[#667085] mb-3">
-              Categories
+          {/* Navigation Links */}
+          <div className="space-y-1">
+            <p className="text-[11px] font-bold uppercase tracking-wider text-[#98A2B3] px-3 mb-2">
+              Menu
             </p>
-            <div className="grid grid-cols-2 gap-2">
-              {categories.map((cat) => (
+            {navLinks.map((link) => {
+              const isActive = pathname === link.href;
+              return (
                 <Link
-                  key={cat.id}
-                  href={`/category/${cat.slug}`}
-                  className="flex items-center gap-2 p-2 rounded-lg bg-[#FAF9FE] text-xs font-medium text-[#202A3D] hover:text-[#7434E8]"
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-semibold transition-all ${
+                    isActive
+                      ? "bg-[#7434E8] text-white shadow-sm shadow-[#7434E8]/20"
+                      : "text-[#202A3D] hover:bg-[#FAF9FE] hover:text-[#7434E8]"
+                  }`}
                 >
-                  <CategoryIcon name={cat.icon || cat.slug} className="w-3.5 h-3.5 text-[#7434E8]" />
-                  <span className="truncate">{cat.name}</span>
+                  <span>{link.name}</span>
                 </Link>
-              ))}
-            </div>
+              );
+            })}
           </div>
 
-          <div className="pt-2">
-            <Link
-              href="/blog"
-              className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-[#7434E8] text-white text-sm font-medium shadow-md shadow-[#7434E8]/20"
-            >
-              <span>Explore All Articles</span>
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
+          {/* Categories */}
+          {categories.length > 0 && (
+            <div className="border-t border-[#E9E7F1] pt-5">
+              <p className="text-[11px] font-bold uppercase tracking-wider text-[#98A2B3] px-3 mb-2.5">
+                Categories
+              </p>
+              <div className="grid grid-cols-1 gap-1">
+                {categories.map((cat) => (
+                  <Link
+                    key={cat.id}
+                    href={`/category/${cat.slug}`}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-[#202A3D] hover:bg-[#FAF9FE] hover:text-[#7434E8] transition-colors"
+                  >
+                    <div className="flex items-center gap-2.5 truncate">
+                      <CategoryIcon
+                        name={cat.icon || cat.slug}
+                        className="w-3.5 h-3.5 text-[#7434E8] shrink-0"
+                      />
+                      <span className="truncate">{cat.name}</span>
+                    </div>
+                    {cat._count?.articles !== undefined && (
+                      <span className="text-[10px] text-[#98A2B3] bg-[#FAF9FE] px-2 py-0.5 rounded-full border border-[#E9E7F1]">
+                        {cat._count.articles}
+                      </span>
+                    )}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
-      )}
+
+        {/* Drawer Bottom Action & Footer */}
+        <div className="p-5 border-t border-[#E9E7F1] space-y-3 bg-[#FAF9FE]/60">
+          <Link
+            href="/blog"
+            onClick={() => setMobileMenuOpen(false)}
+            className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-[#7434E8] hover:bg-[#6028C9] text-white text-xs font-semibold shadow-md shadow-[#7434E8]/25 transition-all"
+          >
+            <span>Explore All Articles</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+          <p className="text-[11px] text-center text-[#98A2B3]">
+            © {new Date().getFullYear()} Animesh ki Baatein
+          </p>
+        </div>
+      </aside>
     </header>
   );
 }

@@ -213,9 +213,15 @@ export function AdminSidebar({
     <>
       {/* Mobile Top Navigation Bar (Only on <lg screens) */}
       <div className="lg:hidden sticky top-0 z-40 bg-white border-b border-[#E9E7F1] px-4 py-3 flex items-center justify-between">
-        <Link href="/admin" className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-[#7434E8] flex items-center justify-center text-white">
-            <BookOpen className="w-4 h-4" />
+        <Link href="/admin" className="flex items-center gap-2.5">
+          <div className="relative w-8 h-8 rounded-xl bg-white border border-[#E9E7F1] p-0.5 flex items-center justify-center">
+            <Image
+              src="/logo.png"
+              alt="Animesh CMS Logo"
+              width={28}
+              height={28}
+              className="w-full h-full object-contain"
+            />
           </div>
           <span className="font-heading font-bold text-sm text-[#202A3D]">
             Animesh CMS
