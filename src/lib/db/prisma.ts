@@ -1,36 +1,38 @@
-import fs from "node:fs";
-import path from "node:path";
-import Database from "better-sqlite3";
-import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
+import { Pool } from "pg";
+import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@/generated/prisma/client";
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
+  pool: Pool | undefined;
 };
 
 function createPrismaClient(): PrismaClient {
-  let rawUrl = process.env.DATABASE_URL || "file:./data/blog.db";
-  let dbPath = rawUrl.replace(/^file:\.\/?/, "");
-  const absolutePath = path.isAbsolute(dbPath)
-    ? dbPath
-    : path.join(process.cwd(), "data", path.basename(dbPath));
+  const connectionString = process.env.DATABASE_URL || "";
 
-  // Ensure WAL mode and busy timeout are configured on the database file
-  try {
-    fs.mkdirSync(path.dirname(absolutePath), { recursive: true });
-    const rawDb = new Database(absolutePath, { timeout: 10000 });
-    rawDb.pragma("journal_mode = WAL");
-    rawDb.pragma("synchronous = NORMAL");
-    rawDb.close();
-  } catch (err) {
-    console.warn("Could not set SQLite pragmas:", err);
+  const isSupabase =
+    connectionString.includes("supabase.com") ||
+    connectionString.includes("pooler");
+  const isLocal =
+    connectionString.includes("localhost") ||
+    connectionString.includes("127.0.0.1");
+
+  const pool =
+    globalForPrisma.pool ??
+    new Pool({
+      connectionString,
+      ssl:
+        isSupabase || (!isLocal && connectionString.length > 0)
+          ? { rejectUnauthorized: false }
+          : undefined,
+      max: 10,
+    });
+
+  if (process.env.NODE_ENV !== "production") {
+    globalForPrisma.pool = pool;
   }
 
-  const adapter = new PrismaBetterSqlite3({
-    url: `file:${absolutePath}`,
-    timeout: 10000,
-  });
-
+  const adapter = new PrismaPg(pool);
   return new PrismaClient({ adapter });
 }
 

@@ -1,29 +1,27 @@
 import "dotenv/config";
-import path from "node:path";
-import Database from "better-sqlite3";
-import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
+import { Pool } from "pg";
+import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../src/generated/prisma/client";
 import bcrypt from "bcryptjs";
 
-const rawUrl = process.env.DATABASE_URL || "file:./data/blog.db";
-let dbPath = rawUrl.replace(/^file:/, "");
-if (!path.isAbsolute(dbPath)) {
-  dbPath = path.resolve(process.cwd(), dbPath);
-}
+const connectionString =
+  process.env.DIRECT_URL || process.env.DATABASE_URL || "";
+const isSupabase =
+  connectionString.includes("supabase.com") ||
+  connectionString.includes("pooler");
+const isLocal =
+  connectionString.includes("localhost") ||
+  connectionString.includes("127.0.0.1");
 
-try {
-  const rawDb = new Database(dbPath, { timeout: 10000 });
-  rawDb.pragma("journal_mode = WAL");
-  rawDb.pragma("synchronous = NORMAL");
-  rawDb.close();
-} catch (e) {
-  // ignore
-}
-
-const adapter = new PrismaBetterSqlite3({
-  url: `file:${dbPath}`,
-  timeout: 10000,
+const pool = new Pool({
+  connectionString,
+  ssl:
+    isSupabase || (!isLocal && connectionString.length > 0)
+      ? { rejectUnauthorized: false }
+      : undefined,
 });
+
+const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
