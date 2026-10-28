@@ -1,3 +1,5 @@
+import fs from "node:fs";
+import path from "node:path";
 import { ImageResponse } from "next/og";
 
 export const runtime = "nodejs";
@@ -10,6 +12,17 @@ export const size = {
 export const contentType = "image/png";
 
 export default async function OpenGraphImage() {
+  let logoBase64 = "";
+  try {
+    const logoFile = path.join(process.cwd(), "public/icon-512.png");
+    if (fs.existsSync(logoFile)) {
+      const data = fs.readFileSync(logoFile);
+      logoBase64 = `data:image/png;base64,${data.toString("base64")}`;
+    }
+  } catch (e) {
+    // fallback
+  }
+
   return new ImageResponse(
     (
       <div
@@ -39,23 +52,37 @@ export default async function OpenGraphImage() {
               alignItems: "center",
             }}
           >
-            <div
-              style={{
-                width: "56px",
-                height: "56px",
-                borderRadius: "16px",
-                background: "#7434E8",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "white",
-                fontSize: "28px",
-                fontWeight: 900,
-                marginRight: "16px",
-              }}
-            >
-              A
-            </div>
+            {logoBase64 ? (
+              <img
+                src={logoBase64}
+                alt="Logo"
+                style={{
+                  width: "60px",
+                  height: "60px",
+                  borderRadius: "16px",
+                  marginRight: "16px",
+                  objectFit: "contain",
+                }}
+              />
+            ) : (
+              <div
+                style={{
+                  width: "56px",
+                  height: "56px",
+                  borderRadius: "16px",
+                  background: "#7434E8",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "white",
+                  fontSize: "28px",
+                  fontWeight: 900,
+                  marginRight: "16px",
+                }}
+              >
+                A
+              </div>
+            )}
             <div
               style={{
                 display: "flex",

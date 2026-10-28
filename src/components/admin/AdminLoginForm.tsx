@@ -3,7 +3,8 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { BookOpen, Lock, Mail, ArrowRight, ShieldCheck } from "lucide-react";
+import Image from "next/image";
+import { Lock, Mail, ArrowRight, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { loginAdminAction } from "@/app/actions/auth-actions";
 
@@ -56,8 +57,15 @@ export function AdminLoginForm() {
         {/* Brand Header */}
         <div className="text-center space-y-3">
           <Link href="/" className="inline-flex items-center gap-2.5 group">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#7434E8] to-[#9254F3] flex items-center justify-center text-white shadow-lg shadow-[#7434E8]/25 transition-transform group-hover:scale-105">
-              <BookOpen className="w-6 h-6" />
+            <div className="relative w-16 h-16 rounded-3xl bg-white border border-[#E9E7F1] shadow-lg shadow-[#7434E8]/15 flex items-center justify-center p-2 transition-all duration-300 group-hover:scale-105 group-hover:shadow-xl group-hover:shadow-[#7434E8]/25 group-hover:border-[#7434E8]/40">
+              <Image
+                src="/logo.png"
+                alt="Animesh CMS Logo"
+                width={64}
+                height={64}
+                className="w-full h-full object-contain"
+                priority
+              />
             </div>
           </Link>
           <h1 className="text-2xl sm:text-3xl font-heading font-extrabold text-[#202A3D]">

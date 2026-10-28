@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { BookOpen } from "lucide-react";
+import Image from "next/image";
 
 interface FooterProps {
   siteName?: string;
@@ -29,9 +29,15 @@ export function Footer({
         <div className="flex flex-col md:flex-row items-center justify-between gap-8 border-b border-[#E9E7F1] pb-10">
           {/* Brand & Tagline */}
           <div className="flex flex-col items-center md:items-start text-center md:text-left gap-2">
-            <Link href="/" className="flex items-center gap-2.5 group">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#7434E8] to-[#9254F3] flex items-center justify-center text-white shadow-sm shadow-[#7434E8]/20">
-                <BookOpen className="w-4 h-4" />
+            <Link href="/" className="flex items-center gap-3 group">
+              <div className="relative w-10 h-10 rounded-2xl bg-white border border-[#E9E7F1] shadow-sm shadow-[#7434E8]/10 flex items-center justify-center p-1 transition-all duration-300 group-hover:scale-105 group-hover:shadow-md group-hover:shadow-[#7434E8]/20">
+                <Image
+                  src="/logo.png"
+                  alt="Animesh ki Baatein Logo"
+                  width={36}
+                  height={36}
+                  className="w-full h-full object-contain"
+                />
               </div>
               <span className="font-heading font-bold text-lg text-[#202A3D]">
                 Animesh <span className="text-[#7434E8]">ki Baatein</span>

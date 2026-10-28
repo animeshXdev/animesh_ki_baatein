@@ -49,14 +49,14 @@ export const metadata: Metadata = {
   publisher: "Animesh ki Baatein",
   icons: {
     icon: [
-      { url: "/favicon.svg", type: "image/svg+xml" },
-      { url: "/icon", sizes: "32x32", type: "image/png" },
       { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/icon.png", sizes: "32x32", type: "image/png" },
     ],
     apple: [
-      { url: "/apple-icon", sizes: "180x180", type: "image/png" },
+      { url: "/apple-icon.png", sizes: "180x180", type: "image/png" },
     ],
-    shortcut: ["/favicon.svg"],
+    shortcut: ["/favicon.ico"],
   },
   manifest: "/manifest.webmanifest",
   openGraph: {

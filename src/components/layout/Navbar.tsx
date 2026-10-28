@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import {
-  BookOpen,
   Search,
   Menu,
   X,
@@ -80,10 +80,17 @@ export function Navbar({ categories = [] }: NavbarProps) {
   return (
     <header className="sticky top-0 z-50 w-full bg-white/90 backdrop-blur-md border-b border-[#E9E7F1] transition-all">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
-        {/* Logo */}
+        {/* Brand Logo */}
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#7434E8] to-[#9254F3] flex items-center justify-center text-white shadow-md shadow-[#7434E8]/20 transition-transform group-hover:scale-105">
-            <BookOpen className="w-5 h-5" />
+          <div className="relative w-11 h-11 rounded-2xl bg-white border border-[#E9E7F1] shadow-sm shadow-[#7434E8]/10 flex items-center justify-center p-1 transition-all duration-300 group-hover:scale-105 group-hover:shadow-md group-hover:shadow-[#7434E8]/20 group-hover:border-[#7434E8]/30">
+            <Image
+              src="/logo.png"
+              alt="Animesh ki Baatein Logo"
+              width={40}
+              height={40}
+              className="w-full h-full object-contain"
+              priority
+            />
           </div>
           <div className="flex flex-col">
             <span className="font-heading font-bold text-xl tracking-tight text-[#202A3D]">

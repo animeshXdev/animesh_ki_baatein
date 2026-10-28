@@ -52,11 +52,17 @@ async function main() {
 
     // 2. Verify Favicon and Icons status codes
     console.log("\n📋 2. Checking Favicon & Icon Asset Endpoints");
-    const iconCode = await fetchStatusCode("/icon");
-    assert(iconCode === 200, `/icon endpoint returns HTTP 200 (Got: ${iconCode})`);
+    const icoCode = await fetchStatusCode("/favicon.ico");
+    assert(icoCode === 200, `/favicon.ico endpoint returns HTTP 200 (Got: ${icoCode})`);
 
-    const appleIconCode = await fetchStatusCode("/apple-icon");
-    assert(appleIconCode === 200, `/apple-icon endpoint returns HTTP 200 (Got: ${appleIconCode})`);
+    const svgCode = await fetchStatusCode("/favicon.svg");
+    assert(svgCode === 200, `/favicon.svg endpoint returns HTTP 200 (Got: ${svgCode})`);
+
+    const iconCode = await fetchStatusCode("/icon.png");
+    assert(iconCode === 200, `/icon.png endpoint returns HTTP 200 (Got: ${iconCode})`);
+
+    const appleIconCode = await fetchStatusCode("/apple-icon.png");
+    assert(appleIconCode === 200, `/apple-icon.png endpoint returns HTTP 200 (Got: ${appleIconCode})`);
 
     const ogCode = await fetchStatusCode("/opengraph-image");
     assert(ogCode === 200, `/opengraph-image endpoint returns HTTP 200 (Got: ${ogCode})`);

@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
@@ -91,8 +92,14 @@ export function AdminSidebar({
         {/* Brand Header */}
         <div className="flex items-center justify-between px-2 pt-2">
           <Link href="/admin" className="flex items-center gap-2.5 group">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#7434E8] to-[#9254F3] flex items-center justify-center text-white shadow-md shadow-[#7434E8]/20">
-              <BookOpen className="w-5 h-5" />
+            <div className="relative w-10 h-10 rounded-2xl bg-white border border-[#E9E7F1] shadow-sm shadow-[#7434E8]/10 flex items-center justify-center p-1 transition-all duration-300 group-hover:scale-105 group-hover:shadow-md group-hover:shadow-[#7434E8]/20">
+              <Image
+                src="/logo.png"
+                alt="Animesh CMS Logo"
+                width={36}
+                height={36}
+                className="w-full h-full object-contain"
+              />
             </div>
             <div>
               <p className="font-heading font-bold text-sm text-[#202A3D] leading-none">
