@@ -11,6 +11,7 @@ import {
   Palette,
 } from "lucide-react";
 import { toast } from "sonner";
+import { confirmAction } from "@/lib/utils/swal";
 import {
   createCategoryAction,
   updateCategoryAction,
@@ -173,9 +174,13 @@ export function CategoryManager({
       return;
     }
 
-    const confirmed = window.confirm(
-      `Are you sure you want to delete category "${cat.name}"?`
-    );
+    const confirmed = await confirmAction({
+      title: "Delete Category?",
+      text: `Are you sure you want to delete category "${cat.name}"? This action cannot be undone.`,
+      confirmButtonText: "Yes, delete",
+      cancelButtonText: "Cancel",
+      isDestructive: true,
+    });
     if (!confirmed) return;
 
     try {

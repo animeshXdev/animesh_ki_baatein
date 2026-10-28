@@ -11,6 +11,7 @@ import {
   Folder,
 } from "lucide-react";
 import { toast } from "sonner";
+import { confirmAction } from "@/lib/utils/swal";
 import { uploadMediaAction, deleteMediaAction } from "@/app/actions/media-actions";
 
 interface MediaItem {
@@ -88,9 +89,13 @@ export function MediaLibrary({ initialMedia }: MediaLibraryProps) {
   };
 
   const handleDelete = async (media: MediaItem) => {
-    const confirmed = window.confirm(
-      `Delete "${media.originalName}"? This will delete the physical file and remove the database record.`
-    );
+    const confirmed = await confirmAction({
+      title: "Delete Media File?",
+      text: `Delete "${media.originalName}"? This will delete the file permanently.`,
+      confirmButtonText: "Yes, delete",
+      cancelButtonText: "Cancel",
+      isDestructive: true,
+    });
     if (!confirmed) return;
 
     setDeletingId(media.id);

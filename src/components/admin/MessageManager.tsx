@@ -11,6 +11,7 @@ import {
   User,
 } from "lucide-react";
 import { toast } from "sonner";
+import { confirmAction } from "@/lib/utils/swal";
 import {
   toggleMessageReadAction,
   deleteContactMessageAction,
@@ -59,7 +60,13 @@ export function MessageManager({ initialMessages }: MessageManagerProps) {
   };
 
   const handleDelete = async (id: string) => {
-    const confirmed = window.confirm("Permanently delete this contact message?");
+    const confirmed = await confirmAction({
+      title: "Delete Message?",
+      text: "Are you sure you want to permanently delete this contact message?",
+      confirmButtonText: "Yes, delete",
+      cancelButtonText: "Cancel",
+      isDestructive: true,
+    });
     if (!confirmed) return;
 
     try {

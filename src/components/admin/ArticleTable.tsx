@@ -13,6 +13,7 @@ import {
   Search,
 } from "lucide-react";
 import { toast } from "sonner";
+import { confirmAction } from "@/lib/utils/swal";
 import {
   deleteArticleAction,
   togglePublishAction,
@@ -93,9 +94,13 @@ export function ArticleTable({
   };
 
   const handleDelete = async (id: string, title: string) => {
-    const confirmed = window.confirm(
-      `Are you sure you want to permanently delete "${title}"? This action cannot be undone.`
-    );
+    const confirmed = await confirmAction({
+      title: "Delete Article?",
+      text: `Are you sure you want to permanently delete "${title}"? This action cannot be undone.`,
+      confirmButtonText: "Yes, delete",
+      cancelButtonText: "Keep article",
+      isDestructive: true,
+    });
     if (!confirmed) return;
 
     setDeletingId(id);

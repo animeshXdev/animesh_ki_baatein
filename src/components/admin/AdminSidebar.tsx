@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { logoutAdminAction } from "@/app/actions/auth-actions";
 import { toast } from "sonner";
+import { confirmAction } from "@/lib/utils/swal";
 
 interface AdminSidebarProps {
   adminName: string;
@@ -42,6 +43,16 @@ export function AdminSidebar({
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
 
   const handleLogout = async () => {
+    const confirmed = await confirmAction({
+      title: "Sign Out?",
+      text: "Are you sure you want to log out of your admin dashboard?",
+      confirmButtonText: "Yes, sign out",
+      cancelButtonText: "Stay logged in",
+      icon: "question",
+      isDestructive: false,
+    });
+    if (!confirmed) return;
+
     try {
       await logoutAdminAction();
       toast.success("Logged out successfully");

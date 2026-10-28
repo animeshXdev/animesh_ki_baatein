@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Tags, Plus, Edit2, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
+import { confirmAction } from "@/lib/utils/swal";
 import {
   createTagAction,
   updateTagAction,
@@ -96,7 +97,13 @@ export function TagManager({ initialTags }: TagManagerProps) {
   };
 
   const handleDelete = async (t: TagRecord) => {
-    const confirmed = window.confirm(`Delete tag #${t.name}?`);
+    const confirmed = await confirmAction({
+      title: "Delete Tag?",
+      text: `Are you sure you want to delete tag "#${t.name}"?`,
+      confirmButtonText: "Yes, delete",
+      cancelButtonText: "Cancel",
+      isDestructive: true,
+    });
     if (!confirmed) return;
 
     try {
