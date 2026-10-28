@@ -6,9 +6,37 @@ import { Search, Filter, Calendar, Clock, ArrowRight, X, ChevronLeft, ChevronRig
 import { getArticles } from "@/features/articles/article-service";
 import { getAllCategories } from "@/features/categories/category-service";
 
+const appUrl = process.env.APP_URL || "http://localhost:3000";
+
 export const metadata: Metadata = {
-  title: "All Articles",
-  description: "Browse in-depth articles, architectural guides, and perspectives on technology, productivity, and modern living.",
+  title: "All Articles & Archive",
+  description:
+    "Browse in-depth articles, architectural guides, and perspectives on technology, productivity, and modern living.",
+  alternates: { canonical: `${appUrl}/blog` },
+  openGraph: {
+    title: "All Articles & Publication Archive | Animesh ki Baatein",
+    description:
+      "Browse in-depth articles, architectural guides, and perspectives on technology, productivity, and modern living.",
+    url: `${appUrl}/blog`,
+    siteName: "Animesh ki Baatein",
+    type: "website",
+    images: [
+      {
+        url: `${appUrl}/opengraph-image`,
+        width: 1200,
+        height: 630,
+        type: "image/png",
+        alt: "Articles Archive on Animesh ki Baatein",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "All Articles & Publication Archive | Animesh ki Baatein",
+    description:
+      "Browse in-depth articles, architectural guides, and perspectives on technology, productivity, and modern living.",
+    images: [`${appUrl}/twitter-image`],
+  },
 };
 
 interface BlogPageProps {

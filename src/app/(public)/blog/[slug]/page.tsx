@@ -28,6 +28,21 @@ interface ArticlePageProps {
   params: Promise<{ slug: string }>;
 }
 
+function toAbsoluteUrl(url?: string | null, baseUrl = "http://localhost:3000"): string {
+  if (!url) return `${baseUrl}/opengraph-image`;
+  if (url.startsWith("http://") || url.startsWith("https://")) return url;
+  const cleanPath = url.startsWith("/") ? url : `/${url}`;
+  return `${baseUrl}${cleanPath}`;
+}
+
+function getImageMime(url: string): string {
+  const clean = url.toLowerCase();
+  if (clean.includes(".png")) return "image/png";
+  if (clean.includes(".webp")) return "image/webp";
+  if (clean.includes(".gif")) return "image/gif";
+  return "image/jpeg";
+}
+
 export async function generateMetadata({
   params,
 }: ArticlePageProps): Promise<Metadata> {
@@ -42,32 +57,47 @@ export async function generateMetadata({
 
   const appUrl = process.env.APP_URL || "http://localhost:3000";
   const articleUrl = `${appUrl}/blog/${article.slug}`;
+  const rawImage = article.ogImage || article.coverImage;
+  const ogImageUrl = toAbsoluteUrl(rawImage, appUrl);
+  const mimeType = getImageMime(ogImageUrl);
+  const title = article.seoTitle || article.title;
+  const description =
+    article.seoDescription ||
+    article.excerpt ||
+    "Explore insightful editorial content on Animesh ki Baatein.";
 
   return {
-    title: article.seoTitle || article.title,
-    description: article.seoDescription || article.excerpt || undefined,
+    title,
+    description,
+    alternates: {
+      canonical: articleUrl,
+    },
     openGraph: {
-      title: article.seoTitle || article.title,
-      description: article.seoDescription || article.excerpt || undefined,
+      title,
+      description,
       url: articleUrl,
+      siteName: "Animesh ki Baatein",
       type: "article",
       publishedTime: article.publishedAt?.toISOString(),
       modifiedTime: article.updatedAt.toISOString(),
       authors: [article.author.name],
-      images: article.coverImage
-        ? [
-            {
-              url: article.coverImage,
-              alt: article.coverImageAlt || article.title,
-            },
-          ]
-        : undefined,
+      images: [
+        {
+          url: ogImageUrl,
+          secureUrl: ogImageUrl,
+          width: 1200,
+          height: 630,
+          type: mimeType,
+          alt: article.coverImageAlt || article.title,
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
-      title: article.seoTitle || article.title,
-      description: article.seoDescription || article.excerpt || undefined,
-      images: article.coverImage ? [article.coverImage] : undefined,
+      title,
+      description,
+      images: [ogImageUrl],
+      creator: "@animeshprakash",
     },
   };
 }

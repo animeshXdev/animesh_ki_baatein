@@ -15,13 +15,35 @@ import { getSiteSettings } from "@/features/settings/settings-service";
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings();
+  const appUrl = process.env.APP_URL || "http://localhost:3000";
+  const title = `${settings.siteName} — ${settings.tagline}`;
+  const description = settings.description;
+
   return {
-    title: `${settings.siteName} — ${settings.tagline}`,
-    description: settings.description,
+    title,
+    description,
+    alternates: { canonical: appUrl },
     openGraph: {
-      title: `${settings.siteName} — ${settings.tagline}`,
-      description: settings.description,
+      title,
+      description,
+      url: appUrl,
       siteName: settings.siteName,
+      type: "website",
+      images: [
+        {
+          url: `${appUrl}/opengraph-image`,
+          width: 1200,
+          height: 630,
+          type: "image/png",
+          alt: `${settings.siteName} — ${settings.tagline}`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [`${appUrl}/twitter-image`],
     },
   };
 }

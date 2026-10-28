@@ -22,9 +22,37 @@ export async function generateMetadata({
     return { title: "Tag Not Found" };
   }
 
+  const appUrl = process.env.APP_URL || "http://localhost:3000";
+  const url = `${appUrl}/tag/${tag.slug}`;
+  const title = `Articles tagged with #${tag.name} | Animesh ki Baatein`;
+  const description = `Read all articles, essays and guides tagged with #${tag.name} on Animesh ki Baatein.`;
+
   return {
-    title: `Articles tagged with #${tag.name}`,
-    description: `Read all articles and guides tagged with #${tag.name} on Animesh ki Baatein.`,
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      title,
+      description,
+      url,
+      siteName: "Animesh ki Baatein",
+      type: "website",
+      images: [
+        {
+          url: `${appUrl}/opengraph-image`,
+          width: 1200,
+          height: 630,
+          type: "image/png",
+          alt: `#${tag.name} Articles on Animesh ki Baatein`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [`${appUrl}/twitter-image`],
+    },
   };
 }
 

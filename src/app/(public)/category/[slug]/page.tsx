@@ -23,12 +23,38 @@ export async function generateMetadata({
     return { title: "Category Not Found" };
   }
 
+  const appUrl = process.env.APP_URL || "http://localhost:3000";
+  const url = `${appUrl}/category/${category.slug}`;
+  const title = `${category.name} Articles | Animesh ki Baatein`;
+  const description =
+    category.description ||
+    `Browse in-depth articles, guides and insights on ${category.name}.`;
+
   return {
-    title: `${category.name} Articles`,
-    description: category.description || `Browse articles on ${category.name}`,
+    title,
+    description,
+    alternates: { canonical: url },
     openGraph: {
-      title: `${category.name} Articles | Animesh ki Baatein`,
-      description: category.description || `Browse articles on ${category.name}`,
+      title,
+      description,
+      url,
+      siteName: "Animesh ki Baatein",
+      type: "website",
+      images: [
+        {
+          url: `${appUrl}/opengraph-image`,
+          width: 1200,
+          height: 630,
+          type: "image/png",
+          alt: `${category.name} on Animesh ki Baatein`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [`${appUrl}/twitter-image`],
     },
   };
 }
