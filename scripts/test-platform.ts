@@ -1,8 +1,5 @@
 import "dotenv/config";
-import path from "node:path";
-import Database from "better-sqlite3";
-import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
-import { PrismaClient } from "../src/generated/prisma/client";
+import prisma from "../src/lib/db/prisma";
 import { verifyPassword, hashPassword } from "../src/lib/auth/password";
 import {
   getArticles,
@@ -43,12 +40,6 @@ import {
 } from "../src/features/settings/settings-service";
 import { getDashboardStats } from "../src/features/analytics/analytics-service";
 import { processHeadingsAndExtractToc } from "../src/lib/utils/toc";
-
-const rawUrl = process.env.DATABASE_URL || "file:./data/blog.db";
-const dbPath = path.resolve(process.cwd(), rawUrl.replace(/^file:\.\/?/, ""));
-const sqliteDb = new Database(dbPath, { timeout: 10000 });
-const adapter = new PrismaBetterSqlite3({ url: `file:${dbPath}` });
-const prisma = new PrismaClient({ adapter });
 
 async function runTests() {
   console.log("🚀 Starting comprehensive end-to-end verification...\n");
