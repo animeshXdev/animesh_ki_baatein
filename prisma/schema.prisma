@@ -1,0 +1,195 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Admin {
+  id           String         @id @default(cuid())
+  name         String
+  email        String         @unique
+  passwordHash String
+  avatar       String?
+  bio          String?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  sessions     AdminSession[]
+  articles     Article[]
+}
+
+model AdminSession {
+  id         String    @id @default(cuid())
+  adminId    String
+  tokenHash  String    @unique
+  expiresAt  DateTime
+  revokedAt  DateTime?
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime  @default(now())
+  admin      Admin     @relation(fields: [adminId], references: [id], onDelete: Cascade)
+
+  @@index([adminId])
+  @@index([tokenHash])
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  description String?
+  color       String?   @default("#7434E8")
+  icon        String?   @default("Folder")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  articles    Article[]
+}
+
+model Tag {
+  id        String       @id @default(cuid())
+  name      String
+  slug      String       @unique
+  createdAt DateTime     @default(now())
+  articles  ArticleTag[]
+}
+
+model Article {
+  id             String             @id @default(cuid())
+  title          String
+  slug           String             @unique
+  excerpt        String?
+  content        String
+  plainText      String?
+  coverImage     String?
+  coverImageAlt  String?
+  categoryId     String
+  authorId       String
+  status         String             @default("DRAFT") // DRAFT, PUBLISHED
+  featured       Boolean            @default(false)
+  readingTime    Int                @default(1)
+  views          Int                @default(0)
+  seoTitle       String?
+  seoDescription String?
+  ogImage        String?
+  publishedAt    DateTime?
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+
+  category       Category           @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  author         Admin              @relation(fields: [authorId], references: [id], onDelete: Restrict)
+  tags           ArticleTag[]
+  comments       Comment[]
+  dailyViews     ArticleViewDaily[]
+  redirects      SlugRedirect[]
+
+  @@index([status, publishedAt])
+  @@index([categoryId])
+  @@index([authorId])
+  @@index([featured])
+}
+
+model ArticleTag {
+  articleId String
+  tagId     String
+  createdAt DateTime @default(now())
+
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  tag       Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([articleId, tagId])
+  @@index([tagId])
+}
+
+model Media {
+  id           String   @id @default(cuid())
+  filename     String
+  originalName String
+  path         String
+  url          String
+  mimeType     String
+  size         Int
+  altText      String?
+  createdAt    DateTime @default(now())
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  articleId String
+  name      String
+  email     String
+  content   String
+  status    String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  @@index([articleId, status])
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  subject   String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model NewsletterSubscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+}
+
+model SiteSetting {
+  id                  String   @id @default("default")
+  siteName            String   @default("Animesh ki Baatein")
+  tagline             String   @default("Ideas, stories and knowledge for a smarter you.")
+  description         String   @default("Thoughtful articles for a brighter, smarter tomorrow.")
+  siteUrl             String   @default("http://localhost:3000")
+  logoUrl             String?
+  authorName          String   @default("Animesh Prakash")
+  authorBio           String?
+  authorAvatar        String?
+  defaultOgImage      String?
+  googleSearchConsole String?
+  githubUrl           String?  @default("https://github.com")
+  twitterUrl          String?  @default("https://twitter.com")
+  linkedinUrl         String?  @default("https://linkedin.com")
+  youtubeUrl          String?  @default("https://youtube.com")
+  instagramUrl        String?  @default("https://instagram.com")
+  articlesPerPage     Int      @default(9)
+  aboutContent        String?
+  privacyContent      String?
+  termsContent        String?
+  updatedAt           DateTime @updatedAt
+}
+
+model ArticleViewDaily {
+  id        String   @id @default(cuid())
+  articleId String
+  date      String   // YYYY-MM-DD
+  views     Int      @default(1)
+
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  @@unique([articleId, date])
+  @@index([articleId])
+  @@index([date])
+}
+
+model SlugRedirect {
+  id        String   @id @default(cuid())
+  oldSlug   String   @unique
+  newSlug   String
+  articleId String
+  createdAt DateTime @default(now())
+
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  @@index([oldSlug])
+}
