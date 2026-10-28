@@ -1,3 +1,4 @@
+import fs from "node:fs";
 import path from "node:path";
 import Database from "better-sqlite3";
 import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
@@ -16,6 +17,7 @@ function createPrismaClient(): PrismaClient {
 
   // Ensure WAL mode and busy timeout are configured on the database file
   try {
+    fs.mkdirSync(path.dirname(absolutePath), { recursive: true });
     const rawDb = new Database(absolutePath, { timeout: 10000 });
     rawDb.pragma("journal_mode = WAL");
     rawDb.pragma("synchronous = NORMAL");
